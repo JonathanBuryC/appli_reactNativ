@@ -11,7 +11,7 @@ export default function Accueil() {
       <View style={styles.topButtonsContainer}>
         {/* Bouton Map */}
         <TouchableOpacity
-          onPress={() => router.push('/choix-map' as any)}
+          onPress={() => router.push('/mainView/premierePage/choix-map')}
           style={styles.roundButton}
         >
           <Ionicons name="location-outline" size={24} color="black" />
@@ -19,7 +19,7 @@ export default function Accueil() {
 
         {/* Bouton Calendrier */}
         <TouchableOpacity
-          onPress={() => router.push('/calendrier' as any)}
+          onPress={() => router.push('/mainView/premierePage/calendrier')}
           style={styles.roundButton}
         >
           <Ionicons name="calendar-outline" size={24} color="black" />

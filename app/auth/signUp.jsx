@@ -1,10 +1,44 @@
 import { View, Text, Image, TextInput, StyleSheet,  TouchableOpacity, Pressable  } from 'react-native'
-import React from 'react'
+import React, { useState }  from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../../firebase'
+import { setDoc, doc } from 'firebase/firestore'
 
-export default function SignIn() {
-    const router = useRouter()
+
+export default function SignUp() {
+  const router = useRouter();  
+  const [fullName, setFullName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+// const{userDetail,setUserDetail}=useContext(UserDetailContext)
+
+  const CreateNewAccount=( ) => {
+    createUserWithEmailAndPassword(auth, email, password)
+    .then(async(resp)=> {
+      const user = resp.user;
+      console.log('User created successfully:', user);
+      await SaveUser(user);
+      //Save user to database
+
+    })
+    .catch(e => {
+      console.log(e.message)
+    })
+  }
+
+  const SaveUser= async(user) => {
+    await setDoc(doc(db,'users', email), {
+      name: fullName,
+      email: email,
+      member:false,
+      uid:user?.uid
+    });
+    //navigate to New Screen
+  }
+  
+
   return (
     <View style={{ 
         display: 'flex', 
@@ -22,11 +56,11 @@ export default function SignIn() {
         <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 20 }}>
             Create new account 
         </Text>
-        <TextInput placeholder='Full Name' style={styles.textInput} /> 
-        <TextInput placeholder='Email' style={styles.textInput} />  
-        <TextInput placeholder='Password' secureTextEntry={true} style={styles.textInput} />
+        <TextInput placeholder='Full Name' onChangeText={(value)=>setFullName(value)} style={styles.textInput} /> 
+        <TextInput placeholder='Email' onChangeText={(value)=>setEmail(value)} style={styles.textInput} keyboardType="email-address" />  
+        <TextInput placeholder='Password' onChangeText={(value)=>setPassword(value)} secureTextEntry={true} style={styles.textInput} />
 
-        <TouchableOpacity style={styles.touchableOpacity}>
+        <TouchableOpacity style={styles.touchableOpacity} onPress={CreateNewAccount}>
             <LinearGradient
                 colors={['#ff5fcb', '#8f5cff']}
                 start={{ x: 0, y: 0 }}
