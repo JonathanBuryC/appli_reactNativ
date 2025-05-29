@@ -3,7 +3,7 @@ import React, { useState }  from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../../firebase'
+import { auth, db } from '../../firebase'
 import { setDoc, doc } from 'firebase/firestore'
 
 
@@ -18,7 +18,7 @@ export default function SignUp() {
     createUserWithEmailAndPassword(auth, email, password)
     .then(async(resp)=> {
       const user = resp.user;
-      console.log('User created successfully:', user);
+      console.log('\x1b[32mUser created successfully:\x1b[0m', user);
       await SaveUser(user);
       //Save user to database
 
