@@ -5,9 +5,9 @@ export default function MesBillets() {
   const router = useRouter();
 
   const tabs = [
-    { label: 'À venir', path: '/mes-billets/a-venir' },
-    { label: 'En attente', path: '/mes-billets/en-attente' },
-    { label: 'Passés', path: '/mes-billets/passe' },
+    { label: 'À venir', path: 'mainView/mes-billets/a-venir' },
+    { label: 'En attente', path: 'mainView/mes-billets/en-attente' },
+    { label: 'Passés', path: 'mainView/mes-billets/passe' },
   ];
 
   return (

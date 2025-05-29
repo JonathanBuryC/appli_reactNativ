@@ -1,80 +1,155 @@
-import { View, Text, Image, TextInput, StyleSheet,  TouchableOpacity, Pressable  } from 'react-native'
-import React from 'react'
+import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, Pressable, ActivityIndicator, ToastAndroid } from 'react-native'
+import React, { useState, useContext } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
+import { auth, db } from '../../firebase'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { getDoc, doc } from 'firebase/firestore'
+import { UserDetailContext } from '../../context/UserDetailContext'
 
 export default function SignIn() {
-    const router = useRouter()
+  const router = useRouter()
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const { userDetail, setUserDetail } = useContext(UserDetailContext);
+  const [loading, setLoading] = useState(false);
+
+  const onSignInClick = () => {
+    setLoading(true);
+    if (!email || !password) {
+      ToastAndroid.show('Please fill all fields', ToastAndroid.BOTTOM);
+      setLoading(false);
+      return;
+    }
+    signInWithEmailAndPassword(auth, email, password)
+      .then(async (resp) => {
+        const user = resp.user;
+        await getUserDetails();
+        setLoading(false);
+        router.replace('/mainView');
+      }).catch(e => {
+        setLoading(false);
+        ToastAndroid.show('Email ou Password incorrect', ToastAndroid.BOTTOM);
+      })
+  }
+
+  const getUserDetails = async () => {
+    const result = await getDoc(doc(db, 'users', email));
+    setUserDetail(result.data());
+  }
+
   return (
-    <View style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        marginTop: 20}}>
+    <View style={styles.container}>
       <Image
         source={require('./../../assets/images/logoV1.png')}
-        style={{
-          width: 120,
-          height: 120,
-          alignSelf: 'center'
-        }}
+        style={styles.logo}
       />
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 20 }}>
-            Welcome Back 
-        </Text> 
-        <TextInput placeholder='Email' style={styles.textInput} />  
-        <TextInput placeholder='Password' secureTextEntry={true} style={styles.textInput} />
+      <Text style={styles.title}>
+        Welcome Back
+      </Text>
+      <View style={styles.form}>
+        <TextInput
+          placeholder='Email'
+          onChangeText={setEmail}
+          style={styles.textInput}
+          keyboardType="email-address"
+        />
+        <TextInput
+          placeholder='Password'
+          onChangeText={setPassword}
+          secureTextEntry={true}
+          style={styles.textInput}
+        />
 
-        <TouchableOpacity style={styles.touchableOpacity}>
-            <LinearGradient
-                colors={['#ff5fcb', '#8f5cff']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.gradientButton}>
-            
-                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Sign Up</Text>
-            </LinearGradient>
+        <TouchableOpacity style={styles.touchableOpacity} onPress={onSignInClick} disabled={loading}>
+          <LinearGradient
+            colors={['#ff5fcb', '#8f5cff']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientButton}>
+            {!loading ?
+              <Text style={styles.buttonText}>Sign In</Text>
+              :
+              <ActivityIndicator size="large" />
+            }
+          </LinearGradient>
         </TouchableOpacity>
+      </View>
 
-        <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ color: '#888' }}>
-                Don't have an account?
-            </Text>
-            <Pressable onPress={() => router.push ('/auth/signUp')}>
-                <Text style={{ color: '#007BFF', fontWeight: 'bold', marginLeft: 5 }}>
-                Create New Here
-                </Text>
-            </Pressable>
-        </View>
-
+      <View style={styles.footer}>
+        <Text style={{ color: '#888' }}>
+          Don't have an account?
+        </Text>
+        <Pressable onPress={() => router.push('/auth/signUp')}>
+          <Text style={styles.linkText}>
+            Create New Here
+          </Text>
+        </Pressable>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-    textInput: {
-        width: '80%',
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        marginTop: 10
-    },   
-    touchableOpacity: {
-        width: '90%',
-        height: 50,
-        backgroundColor: '#007BFF',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        marginTop: 15
-    },
-    gradientButton: {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    backgroundColor: '#fff'
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: 'center'
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 20
+  },
+  form: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20
+  },
+  textInput: {
+    width: '80%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginTop: 10
+  },
+  touchableOpacity: {
+    width: '90%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginTop: 15
+  },
+  gradientButton: {
     width: '100%',
     height: 50,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  footer: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  linkText: {
+    color: '#007BFF',
+    fontWeight: 'bold',
+    marginLeft: 5
   }
-})
+});

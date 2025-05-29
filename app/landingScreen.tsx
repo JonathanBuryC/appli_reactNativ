@@ -1,8 +1,32 @@
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import { onAuthStateChanged } from 'firebase/auth';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { auth, db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { useContext } from 'react';
+import { UserDetailContext } from '../context/UserDetailContext';
+
 
 export default function LandingScreen() {
   const router = useRouter();
+  const {userDetail, setUserDetail} = useContext(UserDetailContext);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // User is signed in, redirect to the main view
+      if (user.email) {
+        const result = await getDoc(doc(db, 'users', user.email));
+        setUserDetail({result: result.data()});
+        router.replace('/mainView/premierePage');
+      } else {
+        console.warn("User email is null");
+      }
+      
+    } else {
+      // User is not signed in, stay on the landing screen
+      console.log('\x1b[35mUser n est pas de base connecté\x1b[0m');
+    }
+  })
 
   return (
     <View style={styles.container}>
