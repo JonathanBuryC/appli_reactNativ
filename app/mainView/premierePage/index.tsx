@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { collection, query, orderBy, getDocs, Timestamp } from 'firebase/firestore';
-import { db } from '../../../firebase'; // Assurez-vous que le chemin d'accès à firebase.ts est correct
+import { db } from '../../../firebase'; // Assurez-vous que le chemin d\'accès à firebase.ts est correct
 
 // Define a type for event data to improve type safety
 interface EventData {
@@ -46,7 +46,7 @@ export default function Accueil() {
   }, []); // Le tableau vide [] assure que cela ne s'exécute qu'une seule fois au montage du composant
 
   const renderEventItem = ({ item }: { item: EventData }) => { // Explicitly type item
-    // Formater la date pour l'affichage
+    // Formater la date pour l\'affichage
     const eventDate = item.date instanceof Timestamp ? item.date.toDate().toLocaleDateString() : 'Date inconnue'; // Handle potential non-Timestamp date
 
     return (
@@ -75,7 +75,10 @@ export default function Accueil() {
           onPress={() => router.push('/mainView/premierePage/choix-map')}
           style={styles.roundButton}
         >
-          <Ionicons name="location-outline" size={24} color="black" />
+          {/* Envelopper l'icône dans un composant Text pour éviter les avertissements de texte non enveloppé */}
+          <Text>
+            <Ionicons name="location-outline" size={24} color="black" />
+          </Text>
         </TouchableOpacity>
 
         {/* Bouton Calendrier */}
@@ -83,7 +86,10 @@ export default function Accueil() {
           onPress={() => router.push('/mainView/premierePage/calendrier')}
           style={styles.roundButton}
         >
-          <Ionicons name="calendar-outline" size={24} color="black" />
+          {/* Envelopper l'icône dans un composant Text pour éviter les avertissements de texte non enveloppé */}
+          <Text>
+            <Ionicons name="calendar-outline" size={24} color="black" />
+          </Text>
         </TouchableOpacity>
          {/* TODO: Add a button here to navigate to the Create Event page for creators */}
       </View>
@@ -113,7 +119,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 50,
     paddingHorizontal: 20,
-    backgroundColor: '#fff', // Ajouté pour s'assurer que le fond est blanc
+    backgroundColor: '#fff', // Ajouté pour s\'assurer que le fond est blanc
   },
   topButtonsContainer: {
     flexDirection: 'row',
