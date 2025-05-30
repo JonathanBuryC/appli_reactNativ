@@ -62,8 +62,8 @@ export default function PremierePage() {
 
       <View style={styles.eventInfo}>
         <Text style={styles.eventName}>{item.name || 'Nom de l\'événement inconnu'}</Text>
-        <Text style={styles.eventDate}>{item.date || 'Date inconnue'}</Text> {/* Assurez-vous que le format est affichable */}
-        {/* Afficher d'autres informations si nécessaire */}
+        <Text style={styles.eventDate}>{item.date || 'Date inconnue'}</Text> 
+        
       </View>
     </TouchableOpacity>
   );
@@ -77,7 +77,7 @@ export default function PremierePage() {
           data={events}
           renderItem={renderEventItem}
           keyExtractor={item => item.id}
-          contentContainerStyle={styles.flatListContent} // Appliquer des styles au contenu de la liste
+          contentContainerStyle={styles.flatListContent} 
         />
       ) : (
         <Text>Aucun événement trouvé.</Text>
