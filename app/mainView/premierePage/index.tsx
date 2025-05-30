@@ -25,10 +25,13 @@ export default function PremierePage() {
       try {
         const eventsCollectionRef = collection(db, 'events'); // Assurez-vous que 'events' est le nom correct de votre collection
         const querySnapshot = await getDocs(eventsCollectionRef);
-        const eventsData = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data() as Event, // Caster les données pour correspondre à l'interface Event
-        }));
+        const eventsData = querySnapshot.docs.map(doc => {
+          const data = doc.data() as Omit<Event, 'id'>; // Exclure 'id' du type
+          return {
+            id: doc.id,
+            ...data,
+          };
+        });
         setEvents(eventsData);
       } catch (error) {
         console.error("Erreur lors de la récupération des événements :", error);
