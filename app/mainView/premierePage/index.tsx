@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, ImageBackground } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Image } from 'react-native'; // Importez Image
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons'; // Importez Ionicons pour l'icône de remplacement
 
 // Définir un type pour les données d'événement
 interface Event {
@@ -10,7 +11,8 @@ interface Event {
   name: string;
   date: string; // Ajustez le type si la date est un objet Date ou autre
   description: string; // Assurez-vous que ces champs correspondent à Firestore
-  // Ajoutez d'autres champs d'événement si nécessaire (image, lieu, etc.)
+  imageUrl?: string; // Ajoutez le champ imageUrl
+  // Ajoutez d'autres champs d'événement si nécessaire (lieu, etc.)
 }
 
 export default function PremierePage() {
@@ -21,40 +23,48 @@ export default function PremierePage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const eventsCollectionRef = collection(db, 'events'); 
+        const eventsCollectionRef = collection(db, 'events'); // Assurez-vous que 'events' est le nom correct de votre collection
         const querySnapshot = await getDocs(eventsCollectionRef);
         const eventsData = querySnapshot.docs.map(doc => ({
-          ...doc.data(),
           id: doc.id,
-        } as Event));
+          ...doc.data() as Event, // Caster les données pour correspondre à l'interface Event
+        }));
         setEvents(eventsData);
       } catch (error) {
         console.error("Erreur lors de la récupération des événements :", error);
-       
+        // Optionnel : afficher un message d'erreur à l'utilisateur
       } finally {
         setLoading(false);
       }
     };
 
     fetchEvents();
-  }, []); 
+  }, []); // Le tableau vide assure que cela ne s'exécute qu'une fois au montage
 
   const renderEventItem = ({ item }: { item: Event }) => (
     <TouchableOpacity
       style={styles.eventItem}
       onPress={() => {
-
+        // TODO: Naviguer vers la page de détails de l'événement
         console.log("Naviguer vers les détails de l'événement :", item.id);
-
+        // Nous allons implémenter la navigation ici dans la prochaine étape
       }}
     >
-      
-        <View style={styles.eventInfo}>
-          <Text style={styles.eventName}>{item.name || 'Nom de l\'événement inconnu'}</Text>
-          <Text style={styles.eventDate}>{item.date || 'Date inconnue'}</Text> 
-          
-        </View>
-      
+      {/* Afficher l'image de l'événement si l'URL est disponible */}
+      {item.imageUrl ? (
+        <Image source={{ uri: item.imageUrl }} style={styles.eventImage} />
+      ) : (
+        // Optionnel : afficher une image par défaut ou un espace réservé si pas d'image
+        <View style={styles.noImageIcon}>
+           <Ionicons name="image-outline" size={50} color="#ccc" />
+         </View>
+      )}
+
+      <View style={styles.eventInfo}>
+        <Text style={styles.eventName}>{item.name || 'Nom de l\'événement inconnu'}</Text>
+        <Text style={styles.eventDate}>{item.date || 'Date inconnue'}</Text> {/* Assurez-vous que le format est affichable */}
+        {/* Afficher d'autres informations si nécessaire */}
+      </View>
     </TouchableOpacity>
   );
 
@@ -67,7 +77,7 @@ export default function PremierePage() {
           data={events}
           renderItem={renderEventItem}
           keyExtractor={item => item.id}
-          contentContainerStyle={styles.flatListContent} 
+          contentContainerStyle={styles.flatListContent} // Appliquer des styles au contenu de la liste
         />
       ) : (
         <Text>Aucun événement trouvé.</Text>
@@ -81,24 +91,42 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     paddingHorizontal: 10,
-    backgroundColor: '#f0f0f0', 
+    backgroundColor: '#f0f0f0', // Couleur de fond légère
   },
   flatListContent: {
-    paddingBottom: 20, 
+    paddingBottom: 20, // Ajouter un peu d'espace en bas de la liste
   },
   eventItem: {
-    backgroundColor: '#fff', 
-    padding: 15,
+    backgroundColor: '#fff', // Fond blanc pour chaque élément
+    padding: 0, // Réduire le padding pour que l'image prenne le bord
     marginBottom: 15,
     borderRadius: 8,
-    shadowColor: '#000', 
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3, 
+    elevation: 3,
+    overflow: 'hidden', // Important pour que l'image respecte le borderRadius de l'item
   },
+  eventImage: {
+    width: '100%', // L'image prend toute la largeur de l'élément
+    height: 200, // Hauteur fixe pour l'image (ajustez si nécessaire)
+    resizeMode: 'cover', // Assure que l'image couvre la zone sans déformation
+    borderTopLeftRadius: 8, // Arrondir les coins supérieurs pour correspondre à l'item
+    borderTopRightRadius: 8,
+  },
+   noImageIcon: {
+     width: '100%',
+     height: 200,
+     backgroundColor: '#e0e0e0', // Fond gris clair
+     justifyContent: 'center',
+     alignItems: 'center',
+     borderTopLeftRadius: 8,
+     borderTopRightRadius: 8,
+   },
   eventInfo: {
-    
+    padding: 15, // Ajouter du padding autour des infos textuelles
+    // Styles pour le conteneur des infos (texte)
   },
   eventName: {
     fontSize: 18,
