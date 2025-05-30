@@ -1,9 +1,16 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'; // Import Image
 import { useRouter } from 'expo-router'; // Import useRouter
 import { collection, query, where, getDocs } from 'firebase/firestore'; // Import Firestore functions
 import { db, auth } from '../../firebase'; // Import db and auth from firebase.ts
 import { useEffect, useState } from 'react'; // Import useEffect and useState
 
+// Define a type for user data to improve type safety
+interface UserData {
+  name?: string;
+  email?: string;
+  role?: string;
+  profilePictureUrl?: string;
+}
 export default function Profil() {
   const router = useRouter(); // Initialize useRouter
 
@@ -23,6 +30,7 @@ export default function Profil() {
           if (!querySnapshot.empty) {
             const userData = querySnapshot.docs[0].data();
             setUserRole(userData.role || 'user'); // Default to 'user' if role is not set
+            setUserData(userData as UserData); // Store all user data
           } else {
             console.warn("User document not found in Firestore for UID:", user.uid);
             setUserRole('user'); // Assume 'user' role if document is not found
