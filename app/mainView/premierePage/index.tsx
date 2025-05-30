@@ -5,19 +5,35 @@ import React, { useEffect, useState } from 'react';
 import { collection, query, orderBy, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '../../../firebase'; // Assurez-vous que le chemin d'accès à firebase.ts est correct
 
+// Define a type for event data to improve type safety
+interface EventData {
+  id: string; // Firestore document ID
+  name: string;
+  date: Timestamp; // Assuming 'date' is stored as a Firestore Timestamp
+  location?: string; // Assuming location is optional
+  description?: string; // Assuming description is optional
+  imageUrl?: string; // Assuming imageUrl is optional
+  price?: number; // Assuming price is optional
+  totalTickets?: number; // Assuming totalTickets is optional
+  availableTickets?: number; // Assuming availableTickets is optional
+  creatorId?: string; // Assuming creatorId is optional
+  attendees?: string[]; // Assuming attendees is an array of strings and optional
+  createdAt?: Timestamp; // Assuming createdAt is optional
+}
+
 export default function Accueil() {
   const router = useRouter();
-
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<EventData[]>([]); // Specify the type of events
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const eventsCollectionRef = collection(db, 'events');
-        const q = query(eventsCollectionRef, orderBy('date', 'asc')); // Tri par date ascendante
+        // Order by date, then by creation timestamp as a secondary sort for events with same date
+        const q = query(eventsCollectionRef, orderBy('date', 'asc'), orderBy('createdAt', 'asc'));
         const querySnapshot = await getDocs(q);
-        const eventsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const eventsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as EventData)); // Cast data to EventData
         setEvents(eventsList);
         setLoading(false);
       } catch (error) {
@@ -29,16 +45,24 @@ export default function Accueil() {
     fetchEvents();
   }, []); // Le tableau vide [] assure que cela ne s'exécute qu'une seule fois au montage du composant
 
-  const renderEventItem = ({ item }) => {
+  const renderEventItem = ({ item }: { item: EventData }) => { // Explicitly type item
     // Formater la date pour l'affichage
-    const eventDate = item.date instanceof Timestamp ? item.date.toDate().toLocaleDateString() : item.date;
+    const eventDate = item.date instanceof Timestamp ? item.date.toDate().toLocaleDateString() : 'Date inconnue'; // Handle potential non-Timestamp date
 
     return (
-      <View style={styles.eventItem}>
-        <Text style={styles.eventName}>{item.name}</Text>
-        <Text style={styles.eventDate}>{eventDate}</Text>
-        {/* Vous pouvez ajouter d'autres informations de l'événement ici */}
-      </View>
+      // Add TouchableOpacity for navigation (will implement navigation in next step)
+      <TouchableOpacity
+        onPress={() => {
+          // TODO: Implement navigation to event details page
+          console.log("Event clicked:", item.id);
+        }}
+      >
+        <View style={styles.eventItem}>
+          <Text style={styles.eventName}>{item.name || 'Nom inconnu'}</Text> {/* Handle missing name */}
+          <Text style={styles.eventDate}>{eventDate}</Text>
+          {/* Vous pouvez ajouter d'autres informations de l'événement ici */}
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -90,11 +114,6 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 20,
     backgroundColor: '#fff', // Ajouté pour s'assurer que le fond est blanc
-  },
-  container: {
-    flex: 1,
-    paddingTop: 50,
-    paddingHorizontal: 20,
   },
   topButtonsContainer: {
     flexDirection: 'row',
