@@ -31,6 +31,7 @@ export default function SignUp() {
       name: fullName,
       email: email,
       member: false,
+      role: 'user', // Added role field
       uid: user?.uid
     }
     await setDoc(doc(db, 'users', email), data)
