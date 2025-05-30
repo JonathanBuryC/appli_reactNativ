@@ -14,6 +14,7 @@ interface UserData {
 export default function Profil() {
   const router = useRouter(); // Initialize useRouter
 
+  const [userData, setUserData] = useState<UserData | null>(null); // State to store user data
   const [userRole, setUserRole] = useState<string | null>(null); // State to store user's role
 
 
