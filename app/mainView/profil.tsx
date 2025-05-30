@@ -32,6 +32,8 @@ export default function Profil() {
             const userData = querySnapshot.docs[0].data();
             setUserRole(userData.role || 'user'); // Default to 'user' if role is not set
             setUserData(userData as UserData); // Store all user data
+            console.log("Données utilisateur récupérées :", userData);
+
           } else {
             console.warn("User document not found in Firestore for UID:", user.uid);
             setUserRole('user'); // Assume 'user' role if document is not found
@@ -62,6 +64,7 @@ export default function Profil() {
       // if (!auth.currentUser) router.push('/auth/signIn');
     }
   };
+  console.log("Valeur actuelle de userData :", userData);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
