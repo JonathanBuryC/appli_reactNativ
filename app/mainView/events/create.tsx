@@ -1,57 +1,96 @@
-import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert } from 'react-native'; // Import Alert
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, Timestamp } from 'firebase/firestore'; // Import Timestamp
 import { db, auth } from '../../../firebase'; // Assurez-vous que le chemin d'accès à firebase.ts est correct
 
 export default function CreateEvent() {
   const router = useRouter();
 
   const [eventName, setEventName] = useState('');
-  const [eventDate, setEventDate] = useState(''); // Vous pouvez utiliser un DatePicker ici plus tard
+  const [eventDate, setEventDate] = useState(''); // TODO: Remplacer par un DatePicker
+  const [eventTime, setEventTime] = useState(''); // Nouveau state pour l'heure - TODO: Remplacer par un TimePicker
   const [eventLocation, setEventLocation] = useState('');
   const [eventDescription, setEventDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState(''); // TODO: Remplacer par une fonctionnalité de téléchargement d'image vers Storage
   const [price, setPrice] = useState('');
   const [totalTickets, setTotalTickets] = useState('');
+  const [loading, setLoading] = useState(false); // State pour indiquer le chargement
+
+  // Fonction utilitaire pour générer un slug simple
+  const generateSlug = (name: string, date: string): string => {
+    const formattedName = name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+    const formattedDate = date.replace(/[^0-9]/g, ''); // Garder seulement les chiffres pour la date
+    return `${formattedName}-${formattedDate}`;
+  };
 
   const handleCreateEvent = async () => {
-    if (!eventName || !eventDate || !eventLocation || !price || !totalTickets) {
-      alert('Veuillez remplir tous les champs obligatoires.');
+    if (!eventName || !eventDate || !eventTime || !eventLocation || !price || !totalTickets || !imageUrl) {
+      Alert.alert("Champs manquants", "Veuillez remplir tous les champs pour créer un événement.");
       return;
     }
 
+    setLoading(true); // Activer l'indicateur de chargement
+
     try {
-      // Convertir la date et le prix au bon format si nécessaire
-      // Pour l'instant, nous allons juste enregistrer les strings,
-      // mais il faudra améliorer cela pour utiliser un DatePicker et gérer les nombres correctement.
+      // Tenter de créer un objet Date valide
+      const dateString = `${eventDate} ${eventTime}`; // Combiner date et heure
+      const eventDateTime = new Date(dateString);
+
+      if (isNaN(eventDateTime.getTime())) {
+        Alert.alert("Format date/heure invalide", "Veuillez entrer une date et une heure valides (ex: YYYY-MM-DD HH:mm).");
+        setLoading(false);
+        return;
+      }
+
+      // Générer le slug
+      const eventSlug = generateSlug(eventName, eventDate);
+
       const eventData = {
         name: eventName,
-        date: eventDate, // À remplacer par un Timestamp Firebase plus tard
+        // Stocker la date et l'heure combinées en Timestamp Firestore
+        date: Timestamp.fromDate(eventDateTime),
         location: eventLocation,
         description: eventDescription,
-        imageUrl: imageUrl,
-        price: parseFloat(price), // Convertir le prix en nombre
-        totalTickets: parseInt(totalTickets, 10), // Convertir le nombre de billets en entier
-        availableTickets: parseInt(totalTickets, 10), // Au début, tous les billets sont disponibles
-        creatorId: auth.currentUser?.uid, // L'ID de l'utilisateur créateur
-        attendees: [], // Liste des participants vide au début
-        createdAt: Timestamp.now(), // Timestamp de création
+        imageUrl: imageUrl, // L'URL de l'image
+        price: parseFloat(price),
+        totalTickets: parseInt(totalTickets, 10),
+        availableTickets: parseInt(totalTickets, 10),
+        creatorId: auth.currentUser?.uid,
+        attendees: [],
+        createdAt: Timestamp.now(), // Timestamp de création du document
+        slug: eventSlug, // Ajouter le champ slug
       };
 
+      // Utiliser addDoc pour laisser Firestore générer un ID aléatoire unique
       const docRef = await addDoc(collection(db, 'events'), eventData);
-      console.log("Document written with ID: ", docRef.id);
-      alert('Événement créé avec succès !');
-      // Rediriger l'utilisateur après la création
-      router.back(); // Ou rediriger vers une autre page
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      alert('Erreur lors de la création de l\'événement.');
+
+      console.log("Document événement créé avec l'ID :", docRef.id);
+      Alert.alert("Succès", "L'événement a été créé avec succès !");
+
+      // Réinitialiser les champs après succès
+      setEventName('');
+      setEventDate('');
+      setEventTime('');
+      setEventLocation('');
+      setEventDescription('');
+      setImageUrl('');
+      setPrice('');
+      setTotalTickets('');
+
+      // Optionnel : naviguer vers une autre page après succès (par exemple, la liste des événements)
+      // router.push('/mainView/premierePage');
+
+    } catch (error) {
+      console.error("Erreur lors de la création de l'événement :", error);
+      Alert.alert("Erreur", "Une erreur s'est produite lors de la création de l'événement.");
+    } finally {
+      setLoading(false); // Désactiver l'indicateur de chargement
     }
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Créer un nouvel événement</Text>
 
       <TextInput
@@ -60,59 +99,82 @@ export default function CreateEvent() {
         value={eventName}
         onChangeText={setEventName}
       />
+
       <TextInput
         style={styles.input}
-        placeholder="Date et heure (ex: 2023-12-31 20:00)"
+        placeholder="Date de l'événement (ex: YYYY-MM-DD)" // Indiquer le format attendu
         value={eventDate}
         onChangeText={setEventDate}
+        keyboardType="numbers-and-punctuation" // Aide à la saisie de la date
       />
+
+       <TextInput
+        style={styles.input}
+        placeholder="Heure de l'événement (ex: HH:mm)" // Nouveau champ pour l'heure
+        value={eventTime}
+        onChangeText={setEventTime}
+        keyboardType="numbers-and-punctuation" // Aide à la saisie de l'heure
+      />
+
       <TextInput
         style={styles.input}
-        placeholder="Lieu"
+        placeholder="Lieu de l'événement"
         value={eventLocation}
         onChangeText={setEventLocation}
       />
+
       <TextInput
         style={styles.input}
-        placeholder="Description"
+        placeholder="Description de l'événement"
         value={eventDescription}
         onChangeText={setEventDescription}
-        multiline
+        multiline // Permettre plusieurs lignes pour la description
       />
+
       <TextInput
         style={styles.input}
-        placeholder="URL de l'image"
+        placeholder="URL de l'image de l'événement"
         value={imageUrl}
         onChangeText={setImageUrl}
-        keyboardType="url"
+        keyboardType="url" // Clavier optimisé pour URL
       />
+
       <TextInput
         style={styles.input}
-        placeholder="Prix du billet"
+        placeholder="Prix (ex: 10.00)"
         value={price}
         onChangeText={setPrice}
-        keyboardType="numeric"
+        keyboardType="numeric" // Clavier numérique
       />
+
       <TextInput
         style={styles.input}
         placeholder="Nombre total de billets"
         value={totalTickets}
         onChangeText={setTotalTickets}
-        keyboardType="numeric"
+        keyboardType="number-pad" // Clavier numérique sans décimales
       />
 
-      <Button title="Créer l'événement" onPress={handleCreateEvent} />
-      <Button title="Annuler" onPress={() => router.back()} />
-
+      <TouchableOpacity
+        style={styles.createButton}
+        onPress={handleCreateEvent}
+        disabled={loading} // Désactiver le bouton pendant le chargement
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" /> // Afficher un indicateur de chargement dans le bouton
+        ) : (
+          <Text style={styles.buttonText}>Créer l'événement</Text>
+        )}
+      </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1, // Permet au ScrollView de s'agrandir
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#f8f8f8', // Couleur de fond
   },
   title: {
     fontSize: 24,
@@ -121,11 +183,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
+    backgroundColor: '#fff',
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    borderRadius: 5,
+    borderColor: '#ddd',
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 6,
+    fontSize: 16,
+  },
+  createButton: {
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
