@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react'; // Import useEffect and useState
 export default function Profil() {
   const router = useRouter(); // Initialize useRouter
 
-  const [userRole, setUserRole] = useState(null); // State to store user's role
+  const [userRole, setUserRole] = useState<string | null>(null); // State to store user's role
+
 
   useEffect(() => {
     const fetchUserRole = async () => {
