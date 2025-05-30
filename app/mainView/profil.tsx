@@ -67,26 +67,71 @@ export default function Profil() {
   console.log("Valeur actuelle de userData :", userData);
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={styles.container}> {/* Use defined styles.container */}
       <Text style={styles.title}>Ton profil</Text>
-      {/* Button for Creator actions or Request */}
-      <TouchableOpacity
-        style={styles.createEventButton}
-        onPress={handleCreateEventButtonPress}
-      >
-        {/* Display different text based on user role */}
-        <Text style={styles.buttonText}>
-          {userRole === 'creator' ? 'Créer un événement' : 'Devenir Créateur'}
-        </Text>
-      </TouchableOpacity>
-    </View>
+
+      {/* Profile Image */}
+      <View style={styles.profileImageContainer}>
+        <Image
+          source={userData?.profilePictureUrl ? { uri: userData.profilePictureUrl } : require('../../assets/images/default-profile.png')} // Use default image if no URL
+          style={styles.profileImage}
+        />
+      </View>
+
+      {/* User Info */}
+      <View style={styles.userInfoContainer}>
+        <Text style={styles.userName}>{userData?.name || 'Chargement...'}</Text> {/* Display name or loading */}
+        <Text style={styles.userEmail}>{userData?.email || 'Chargement...'}</Text> {/* Display email or loading */}
+      </View>
+
+      {/* Button for Creator actions or Request - Positioned below user info */}
+       <TouchableOpacity
+         style={styles.createEventButton}
+         onPress={handleCreateEventButtonPress}
+       >
+         {/* Display different text based on user role */}
+         <Text style={styles.buttonText}>
+           {userRole === 'creator' ? 'Créer un événement' : 'Devenir Créateur'}
+         </Text>
+       </TouchableOpacity>
+     </View>
   );
+
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center', // Center content horizontally
+    paddingTop: 50, // Add some padding at the top
+    paddingHorizontal: 20,
+    backgroundColor: '#fff', // Set background color
+  },
   title: {
     fontSize: 24,
     marginBottom: 20,
+  },
+  profileImageContainer: {
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 120, // Set image width
+    height: 120, // Set image height
+    borderRadius: 60, // Make it round
+    backgroundColor: '#eee', // Placeholder background
+  },
+  userInfoContainer: {
+    marginBottom: 30, // Add space below info
+    alignItems: 'center', // Center text horizontally
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  userEmail: {
+    fontSize: 16,
+    color: '#555',
   },
   createEventButton: {
     backgroundColor: '#007BFF',
