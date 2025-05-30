@@ -40,13 +40,13 @@ export default function Layout() {
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="_boutons-accueil"
+ <Tabs.Screen
+        name="events"
         options={{
           tabBarButton: () => null, // cache le bouton dans la tab bar
           headerShown: true,
         }}
-      /> */}
+      />
     </Tabs>
   );
 }
