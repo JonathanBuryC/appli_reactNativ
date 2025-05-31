@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert } from 'react-native'; // Import Alert
+import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert, TouchableOpacity, ActivityIndicator } from 'react-native'; // Import Alert, TouchableOpacity, ActivityIndicator
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { collection, addDoc, Timestamp } from 'firebase/firestore'; // Import Timestamp
