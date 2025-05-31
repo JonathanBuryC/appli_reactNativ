@@ -155,6 +155,7 @@ const handleCreateEvent = async () => {
         value={imageUrl}
         onChangeText={setImageUrl}
         keyboardType="url" // Clavier optimisé pour URL
+        multiline={true}
       />
 
       <TextInput
@@ -208,6 +209,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 6,
     fontSize: 16,
+    // Styles pour le champ de saisie d'image (peut être appliqué à tous si vous le souhaitez)
+    minHeight: 50, // Hauteur minimale
+    height: 'auto', // Laisser la hauteur s'ajuster au contenu si multiligne
+    maxHeight: 150, // Hauteur maximale pour éviter qu'il ne prenne trop de place
+    textAlignVertical: 'top', // Aligner le texte en haut pour multiligne
   },
   createButton: {
     backgroundColor: '#007BFF',
