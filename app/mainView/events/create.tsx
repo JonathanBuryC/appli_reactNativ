@@ -24,7 +24,7 @@ export default function CreateEvent() {
     return `${formattedName}-${formattedDate}`;
   };
 
-  const handleCreateEvent = async () => {
+const handleCreateEvent = async () => {
     if (!eventName || !eventDate || !eventTime || !eventLocation || !price || !totalTickets || !imageUrl) {
       Alert.alert("Champs manquants", "Veuillez remplir tous les champs pour créer un événement.");
       return;
@@ -33,15 +33,32 @@ export default function CreateEvent() {
     setLoading(true); // Activer l'indicateur de chargement
 
     try {
-      // Tenter de créer un objet Date valide
-      const dateString = `${eventDate} ${eventTime}`; // Combiner date et heure
-      const eventDateTime = new Date(dateString);
+      // Parser la date (YYYY-MM-DD)
+      const [year, month, day] = eventDate.split('-').map(Number);
+      // Parser l'heure (HH:mm)
+      const [hour, minute] = eventTime.split(':').map(Number);
 
-      if (isNaN(eventDateTime.getTime())) {
-        Alert.alert("Format date/heure invalide", "Veuillez entrer une date et une heure valides (ex: YYYY-MM-DD HH:mm).");
-        setLoading(false);
-        return;
+      // Vérifier si le parsing a réussi et si les nombres sont valides
+      // Note : Le mois dans l'objet Date est basé sur 0 (0 = janvier, 11 = décembre)
+      if (year === undefined || month === undefined || day === undefined ||
+          hour === undefined || minute === undefined ||
+          isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hour) || isNaN(minute) ||
+          month < 1 || month > 12 || day < 1 || day > 31 || hour < 0 || hour > 23 || minute < 0 || minute > 59)
+      {
+          Alert.alert("Format date/heure invalide", "Veuillez entrer une date et une heure valides (ex: YYYY-MM-DD HH:mm).");
+          setLoading(false);
+          return;
       }
+
+
+      const eventDateTime = new Date(year, month - 1, day, hour, minute);
+
+      // Une vérification supplémentaire bien que le parsing devrait être plus fiable
+       if (isNaN(eventDateTime.getTime())) {
+         Alert.alert("Format date/heure invalide", "Une erreur inattendue est survenue lors de la validation de la date/heure.");
+         setLoading(false);
+         return;
+       }
 
       // Générer le slug
       const eventSlug = generateSlug(eventName, eventDate);
@@ -88,6 +105,7 @@ export default function CreateEvent() {
       setLoading(false); // Désactiver l'indicateur de chargement
     }
   };
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -161,7 +179,7 @@ export default function CreateEvent() {
         disabled={loading} // Désactiver le bouton pendant le chargement
       >
         {loading ? (
-          <ActivityIndicator color="#fff" /> // Afficher un indicateur de chargement dans le bouton
+          <ActivityIndicator color="#fff" /> 
         ) : (
           <Text style={styles.buttonText}>Créer l'événement</Text>
         )}
@@ -172,9 +190,9 @@ export default function CreateEvent() {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1, // Permet au ScrollView de s'agrandir
+    flexGrow: 1, 
     padding: 20,
-    backgroundColor: '#f8f8f8', // Couleur de fond
+    backgroundColor: '#f8f8f8', 
   },
   title: {
     fontSize: 24,

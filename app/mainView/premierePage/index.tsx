@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons'; // Importez Ionicons pour l'icôn
 interface Event {
   id: string;
   name: string;
-  date: string; // Ajustez le type si la date est un objet Date ou autre
+  date: string | { seconds: number }; // Peut être une string ou un objet Firestore Timestamp
   description: string; // Assurez-vous que ces champs correspondent à Firestore
   imageUrl?: string; // Ajoutez le champ imageUrl
   // Ajoutez d'autres champs d'événement si nécessaire (lieu, etc.)
@@ -65,7 +65,19 @@ export default function PremierePage() {
 
       <View style={styles.eventInfo}>
         <Text style={styles.eventName}>{item.name || 'Nom de l\'événement inconnu'}</Text>
-        <Text style={styles.eventDate}>{item.date || 'Date inconnue'}</Text> 
+        <Text style={styles.eventDate}>
+          {typeof item.date === 'object' && 'seconds' in item.date
+            ? new Date(item.date.seconds * 1000).toLocaleString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })
+            : typeof item.date === 'string'
+              ? item.date
+              : 'Date inconnue'}
+</Text>
         
       </View>
     </TouchableOpacity>
