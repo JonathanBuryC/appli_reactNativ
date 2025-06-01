@@ -51,23 +51,33 @@ export default function Recherche() {
   // Fonction pour gérer les changements dans le champ de recherche
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    if (query === '') {
-      setFilteredEvents(allEvents); // Si la recherche est vide, afficher tous les événements
-    } else {
-      // TODO: Implémenter la logique de filtrage basée sur la requête
-      // Cette partie sera développée à l'étape suivante
-      const lowerCaseQuery = query.toLowerCase();
-      const filtered = allEvents.filter(event => {
-        // Exemple de filtrage par nom ou lieu (vous pouvez ajouter d'autres champs)
-        return (
-          (event.name && event.name.toLowerCase().includes(lowerCaseQuery)) ||
-          (event.location && event.location.toLowerCase().includes(lowerCaseQuery)) ||
-          (event.description && event.description.toLowerCase().includes(lowerCaseQuery)) // Filtrer aussi par description
-          // Ajoutez d'autres champs pertinents pour la recherche ici
-        );
-      });
-      setFilteredEvents(filtered);
-    }
+    const lowerCaseQuery = query.toLowerCase();
+    const now = new Date(); // Date actuelle pour filtrer les événements passés
+
+    const filtered = allEvents.filter(event => {
+      // 1. Exclure les événements passés
+      const eventDate = typeof event.date === 'string'
+        ? new Date(event.date) // Assurez-vous que les strings peuvent être parsées en Date
+        : event.date && typeof event.date === 'object' && 'seconds' in event.date
+          ? new Date(event.date.seconds * 1000)
+          : null;
+
+      if (eventDate && eventDate < now) {
+        return false; // Exclure l'événement s'il est passé
+      }
+
+      // 2. Filtrer par nom, lieu, description, OU date formatée
+      const searchableText = [
+        event.name,
+        event.location,
+        event.description,
+        formatTimestamp(event.date) // Inclure la date formatée dans le texte de recherche
+      ].filter(Boolean).join(' ').toLowerCase(); // Joindre tous les champs pertiniss en une seule chaîne
+
+      return searchableText.includes(lowerCaseQuery); // Vérifier si la requête est incluse dans le texte combiné
+    });
+
+    setFilteredEvents(filtered);
   };
 
 
@@ -86,41 +96,49 @@ export default function Recherche() {
 
   const renderEventItem = ({ item }: { item: Event }) => (
     <TouchableOpacity
-      style={styles.eventItem}
+      style={styles.eventItem} // Utilise le nouveau style pour l'élément de liste
       onPress={() => {
-        // Naviguer vers la page de détails de l'événement filtré
         router.push(`/mainView/events/${item.id}`);
         console.log("Naviguer vers les détails de l'événement :", item.id);
       }}
     >
-      {item.imageUrl ? (
-        <Image source={{ uri: item.imageUrl }} style={styles.eventImage} />
-      ) : (
-        <View style={styles.noImageIcon}>
-           <Ionicons name="image-outline" size={50} color="#ccc" />
-         </View>
-      )}
+      {/* Conteneur flexible pour l'image et les infos */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
+        {/* Image (petit carré à gauche) */}
+        {item.imageUrl ? (
+          <Image source={{ uri: item.imageUrl }} style={styles.eventImage} />
+        ) : (
+          <View style={styles.noImageIcon}>
+             <Ionicons name="image-outline" size={30} color="#888" /> {/* Icône plus petite */}
+           </View>
+        )}
 
-      <View style={styles.eventInfo}>
-        <Text style={styles.eventName}>{item.name || 'Nom de l\'événement inconnu'}</Text>
-         {/* Utiliser la fonction de formatage pour la date */}
-        <Text style={styles.eventDate}>Quand: {formatTimestamp(item.date)}</Text>
-         <Text style={styles.eventLocation}>Où: {item.location || 'Lieu inconnu'}</Text> {/* Afficher aussi le lieu */}
-         {/* Optionnel: Afficher un court extrait de la description si pertinent */}
+        {/* Informations de l'événement (à droite de l'image) */}
+        <View style={styles.eventInfo}>
+          <Text style={styles.eventName} numberOfLines={1}>{item.name || 'Nom de l\'événement inconnu'}</Text> {/* Limiter à une ligne */}
+          <Text style={styles.eventDate} numberOfLines={1}>Quand: {formatTimestamp(item.date)}</Text>
+          <Text style={styles.eventLocation} numberOfLines={1}>Où: {item.location || 'Lieu inconnu'}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
 
 
+
   return (
     <View style={styles.container}>
       {/* Barre de recherche */}
-      <TextInput
+{/* Barre de recherche */}
+<TextInput
         style={styles.searchInput}
-        placeholder="Rechercher des événements (nom, lieu, description...)"
+        // Mettez à jour le placeholder
+        placeholder="Rechercher par nom, lieu, date, description..."
         value={searchQuery}
-        onChangeText={handleSearch} // Appeler handleSearch lors de la saisie
+        onChangeText={handleSearch}
+        // Ajoutez la couleur du placeholder
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
+
 
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
@@ -141,7 +159,7 @@ export default function Recherche() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 10, // Ajuster le padding pour laisser de la place à la barre de recherche
+    paddingTop: 10,
     paddingHorizontal: 10,
     backgroundColor: '#f0f0f0',
   },
@@ -151,56 +169,59 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginBottom: 10, // Espacement sous la barre de recherche
+    marginBottom: 10,
     backgroundColor: '#fff',
+    // Ajoutez ceci si vous voulez centrer la barre de recherche :
+    // alignSelf: 'center',
+    // width: '95%', // Optionnel : ajuster la largeur si centré
   },
   flatListContent: {
     paddingBottom: 20,
   },
   eventItem: {
     backgroundColor: '#fff',
-    padding: 0,
-    marginBottom: 15,
+    marginBottom: 10, // Espacement entre les items
     borderRadius: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 }, // Ombre plus légère
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
     overflow: 'hidden',
+    // Pas de padding direct ici, le padding est dans la View interne pour l'alignement
   },
   eventImage: {
-    width: '100%',
-    height: 180, // Hauteur légèrement ajustée pour s'intégrer avec la barre de recherche
+    width: 60, // Taille de l'image réduite (petit carré)
+    height: 60,
+    borderRadius: 4, // Arrondir légèrement les coins de l'image
+    marginRight: 10, // Espacement entre l'image et les infos
     resizeMode: 'cover',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
   },
    noImageIcon: {
-     width: '100%',
-     height: 180,
-     backgroundColor: '#e0e0e0',
+     width: 60, // Même taille que l'image
+     height: 60,
+     borderRadius: 4,
+     backgroundColor: '#e9e9e9', // Couleur de fond pour l'icône
      justifyContent: 'center',
      alignItems: 'center',
-     borderTopLeftRadius: 8,
-     borderTopRightRadius: 8,
+     marginRight: 10,
    },
   eventInfo: {
-    padding: 15,
+    flex: 1, // Permet aux infos de prendre l'espace restant
+    justifyContent: 'center', // Centrer verticalement le texte
   },
   eventName: {
-    fontSize: 18,
+    fontSize: 16, // Taille de police légèrement réduite
     fontWeight: 'bold',
-    marginBottom: 5,
+    // marginBottom: 2, // Ajuster l'espacement si nécessaire
   },
   eventDate: {
-    fontSize: 14,
+    fontSize: 12, // Taille de police plus petite
     color: '#555',
-    marginBottom: 2, // Espacement réduit
+    // marginBottom: 1, // Ajuster l'espacement
   },
-   eventLocation: { // Style pour le lieu
-     fontSize: 14,
+   eventLocation: {
+     fontSize: 12, // Taille de police plus petite
      color: '#555',
-     marginBottom: 5,
    }
 });
