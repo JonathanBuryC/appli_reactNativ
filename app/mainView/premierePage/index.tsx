@@ -65,7 +65,13 @@ export default function PremierePage() {
 
       <View style={styles.eventInfo}>
         <Text style={styles.eventName}>{item.name || 'Nom de l\'événement inconnu'}</Text>
-        <Text style={styles.eventDate}>{item.date || 'Date inconnue'}</Text>
+        <Text style={styles.eventDate}>
+          {typeof item.date === 'string'
+            ? item.date
+            : item.date && typeof item.date === 'object' && 'seconds' in item.date
+              ? new Date(item.date.seconds * 1000).toLocaleDateString()
+              : 'Date inconnue'}
+        </Text>
       </View>
     </TouchableOpacity>
   );
