@@ -108,17 +108,14 @@ export default function EventDetailsPage() {
       )}
 
       <Text style={styles.eventName}>{eventDetails.name}</Text>
-      {/* Afficher la date/heure formatée */}
+      
       <Text style={styles.eventDate}>Quand: {formatTimestamp(eventDetails.date)}</Text>
       <Text style={styles.eventLocation}>Où: {eventDetails.location}</Text>
       <Text style={styles.eventDescription}>{eventDetails.description}</Text>
-      <Text style={styles.eventPrice}>Prix: {eventDetails.price} €</Text> {/* Assurez-vous du format monétaire */}
+      <Text style={styles.eventPrice}>Prix: {eventDetails.price} €</Text> 
       <Text style={styles.eventTickets}>Billets disponibles: {eventDetails.availableTickets} / {eventDetails.totalTickets}</Text>
 
-      {/* Ajoutez d'autres détails de l'événement ici */}
-
-      {/* Exemple de bouton - les actions (acheter billet, etc.) seront ajoutées plus tard */}
-      {/* <Button title="Acheter un billet" onPress={() => { /* TODO: Implement buying logic */ }} /> */}
+      
 
     </ScrollView>
   );

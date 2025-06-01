@@ -54,7 +54,7 @@ export default function PremierePage() {
         console.log("Tentative de navigation vers :", `/mainView/events/${item.id}`); // Log pour vérifier l'URL de navigation
       }}
     >
-      {/* ... (reste du contenu de renderEventItem, y compris l'image et les infos) ... */}
+      
       {item.imageUrl ? (
         <Image source={{ uri: item.imageUrl }} style={styles.eventImage} />
       ) : (
