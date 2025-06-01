@@ -48,9 +48,9 @@ export default function SignUp() {
         Create new account
       </Text>
       <View style={styles.form}>
-        <TextInput placeholder='Full Name' onChangeText={setFullName} style={styles.textInput} />
-        <TextInput placeholder='Email' onChangeText={setEmail} style={styles.textInput} keyboardType="email-address" />
-        <TextInput placeholder='Password' onChangeText={setPassword} secureTextEntry={true} style={styles.textInput} />
+        <TextInput placeholder='Full Name' onChangeText={setFullName} style={styles.textInput} placeholderTextColor="rgba(0,0,0,0.4)" />
+        <TextInput placeholder='Email' onChangeText={setEmail} style={styles.textInput} keyboardType="email-address" placeholderTextColor="rgba(0,0,0,0.4)" />
+        <TextInput placeholder='Password' onChangeText={setPassword} secureTextEntry={true} style={styles.textInput} placeholderTextColor="rgba(0,0,0,0.4)" />
 
         <TouchableOpacity style={styles.touchableOpacity} onPress={CreateNewAccount}>
           <LinearGradient

@@ -53,12 +53,14 @@ export default function SignIn() {
           onChangeText={setEmail}
           style={styles.textInput}
           keyboardType="email-address"
+          placeholderTextColor="rgba(0,0,0,0.4)"
         />
         <TextInput
           placeholder='Password'
           onChangeText={setPassword}
           secureTextEntry={true}
           style={styles.textInput}
+          placeholderTextColor="rgba(0,0,0,0.4)"
         />
 
         <TouchableOpacity style={styles.touchableOpacity} onPress={onSignInClick} disabled={loading}>

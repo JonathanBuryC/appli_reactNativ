@@ -116,6 +116,7 @@ const handleCreateEvent = async () => {
         placeholder="Nom de l'événement"
         value={eventName}
         onChangeText={setEventName}
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
       <TextInput
@@ -124,6 +125,7 @@ const handleCreateEvent = async () => {
         value={eventDate}
         onChangeText={setEventDate}
         keyboardType="numbers-and-punctuation" // Aide à la saisie de la date
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
        <TextInput
@@ -132,6 +134,7 @@ const handleCreateEvent = async () => {
         value={eventTime}
         onChangeText={setEventTime}
         keyboardType="numbers-and-punctuation" // Aide à la saisie de l'heure
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
       <TextInput
@@ -139,6 +142,7 @@ const handleCreateEvent = async () => {
         placeholder="Lieu de l'événement"
         value={eventLocation}
         onChangeText={setEventLocation}
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
       <TextInput
@@ -147,6 +151,7 @@ const handleCreateEvent = async () => {
         value={eventDescription}
         onChangeText={setEventDescription}
         multiline // Permettre plusieurs lignes pour la description
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
       <TextInput
@@ -156,6 +161,7 @@ const handleCreateEvent = async () => {
         onChangeText={setImageUrl}
         keyboardType="url" // Clavier optimisé pour URL
         multiline={true}
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
       <TextInput
@@ -164,6 +170,7 @@ const handleCreateEvent = async () => {
         value={price}
         onChangeText={setPrice}
         keyboardType="numeric" // Clavier numérique
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
       <TextInput
@@ -172,6 +179,7 @@ const handleCreateEvent = async () => {
         value={totalTickets}
         onChangeText={setTotalTickets}
         keyboardType="number-pad" // Clavier numérique sans décimales
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
       <TouchableOpacity

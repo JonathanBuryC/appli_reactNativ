@@ -61,6 +61,7 @@ export default function RequestCreatorForm() {
         value={whoAreYou}
         onChangeText={setWhoAreYou}
         multiline
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
        <TextInput
         style={styles.input}
@@ -68,13 +69,15 @@ export default function RequestCreatorForm() {
         value={pastEvents}
         onChangeText={setPastEvents}
         multiline
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
       <TextInput
         style={styles.input}
-        placeholder="Liens vers vos réseaux sociaux / site web (Optionnel)"
+        placeholder="Liens vers vos réseaux sociaux (Optionnel)"
         value={socialMediaLinks}
         onChangeText={setSocialMediaLinks}
         keyboardType="url"
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
       <TextInput
         style={styles.input}
@@ -82,6 +85,7 @@ export default function RequestCreatorForm() {
         value={phoneNumber}
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
+        placeholderTextColor="rgba(0,0,0,0.4)"
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSubmitRequest}>
