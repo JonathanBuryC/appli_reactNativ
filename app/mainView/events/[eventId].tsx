@@ -45,8 +45,7 @@ export default function EventDetailsPage() {
         const eventDocSnap = await getDoc(eventDocRef);
 
         if (eventDocSnap.exists()) {
-          setEventDetails({ id: eventDocSnap.id, ...eventDocSnap.data() as EventDetails });
-          console.log("Détails de l'événement récupérés :", eventDocSnap.data());
+          setEventDetails({ ...(eventDocSnap.data() as EventDetails), id: eventDocSnap.id });
         } else {
           setError("Événement non trouvé.");
           console.log("Aucun document trouvé pour l'ID :", eventId);
