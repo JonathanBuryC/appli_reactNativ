@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, Pressable } from 'react-native'
+import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, Pressable, ToastAndroid} from 'react-native'
 import React, { useState, useContext } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
@@ -24,7 +24,13 @@ export default function SignUp() {
       })
       .catch(e => {
         console.log("Erreur d'inscription:", e.code, e.message);
-        ToastAndroid.show("Erreur d'inscription: " + e.message, ToastAndroid.BOTTOM);
+        if (e.code === 'auth/email-already-in-use') {
+          ToastAndroid.show('Email already in use', ToastAndroid.BOTTOM);
+        } else if (e.code === 'auth/invalid-email') {
+          ToastAndroid.show('Invalid email address', ToastAndroid.BOTTOM);
+        } else if (e.code === 'auth/weak-password') {
+          ToastAndroid.show('Weak password', ToastAndroid.BOTTOM);
+        }
       })
   }
 
