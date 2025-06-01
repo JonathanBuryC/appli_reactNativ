@@ -25,8 +25,6 @@ interface EventDetails {
 export default function EventDetailsPage() {
   const { eventId } = useLocalSearchParams(); // Lire l'ID de l'événement depuis les paramètres de l'URL
 
-  console.log("ID de l'événement reçu via les paramètres de l'URL :", eventId);
-
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +35,8 @@ export default function EventDetailsPage() {
       setLoading(false);
       return;
     }
+
+    console.log("ID de l'événement reçu via les paramètres de l'URL :", eventId);
 
     const fetchEventDetails = async () => {
       try {
