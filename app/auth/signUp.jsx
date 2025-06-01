@@ -23,7 +23,8 @@ export default function SignUp() {
         router.replace('/mainView/premierePage');
       })
       .catch(e => {
-        console.log(e.message)
+        console.error("Erreur d'inscription:", e.code, e.message);
+        ToastAndroid.show("Erreur d'inscription: " + e.message, ToastAndroid.BOTTOM);
       })
   }
 
