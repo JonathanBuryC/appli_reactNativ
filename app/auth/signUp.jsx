@@ -20,6 +20,7 @@ export default function SignUp() {
         const user = resp.user;
         console.log('\x1b[32mUser created successfully:\x1b[0m', user);
         await SaveUser(user);
+        router.replace('/mainView/premierePage');
       })
       .catch(e => {
         console.log(e.message)

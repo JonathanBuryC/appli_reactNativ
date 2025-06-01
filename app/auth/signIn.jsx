@@ -26,7 +26,7 @@ export default function SignIn() {
         const user = resp.user;
         await getUserDetails();
         setLoading(false);
-        router.replace('/mainView');
+        router.replace('/mainView/premierePage');
       }).catch(e => {
         setLoading(false);
         ToastAndroid.show('Email ou Password incorrect', ToastAndroid.BOTTOM);
