@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../firebase'; // Ajustez le chemin si nécessaire
+import { db } from '../../firebase'; // Ajustez le chemin si nécessaire
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
