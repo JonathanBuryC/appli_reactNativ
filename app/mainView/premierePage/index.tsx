@@ -48,16 +48,16 @@ export default function PremierePage() {
     <TouchableOpacity
       style={styles.eventItem}
       onPress={() => {
-        // TODO: Naviguer vers la page de détails de l'événement
-        console.log("Naviguer vers les détails de l'événement :", item.id);
-        // Nous allons implémenter la navigation ici dans la prochaine étape
+        // NAVIGUER VERS LA PAGE DE DÉTAILS DE L'ÉVÉNEMENT
+        // Utilisez router.push() avec le chemin dynamique et l'ID de l'événement
+        router.push(`/mainView/events/${item.id}`);
+        console.log("Tentative de navigation vers :", `/mainView/events/${item.id}`); // Log pour vérifier l'URL de navigation
       }}
     >
-      {/* Afficher l'image de l'événement si l'URL est disponible */}
+      {/* ... (reste du contenu de renderEventItem, y compris l'image et les infos) ... */}
       {item.imageUrl ? (
         <Image source={{ uri: item.imageUrl }} style={styles.eventImage} />
       ) : (
-        // Optionnel : afficher une image par défaut ou un espace réservé si pas d'image
         <View style={styles.noImageIcon}>
            <Ionicons name="image-outline" size={50} color="#ccc" />
          </View>
@@ -65,23 +65,11 @@ export default function PremierePage() {
 
       <View style={styles.eventInfo}>
         <Text style={styles.eventName}>{item.name || 'Nom de l\'événement inconnu'}</Text>
-        <Text style={styles.eventDate}>
-          {typeof item.date === 'object' && 'seconds' in item.date
-            ? new Date(item.date.seconds * 1000).toLocaleString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })
-            : typeof item.date === 'string'
-              ? item.date
-              : 'Date inconnue'}
-</Text>
-        
+        <Text style={styles.eventDate}>{item.date || 'Date inconnue'}</Text>
       </View>
     </TouchableOpacity>
   );
+
 
   return (
     <View style={styles.container}>
