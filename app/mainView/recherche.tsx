@@ -102,20 +102,20 @@ export default function Recherche() {
         console.log("Naviguer vers les détails de l'événement :", item.id);
       }}
     >
-      {/* Conteneur flexible pour l'image et les infos */}
+      
       <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>
-        {/* Image (petit carré à gauche) */}
+        
         {item.imageUrl ? (
           <Image source={{ uri: item.imageUrl }} style={styles.eventImage} />
         ) : (
           <View style={styles.noImageIcon}>
-             <Ionicons name="image-outline" size={30} color="#888" /> {/* Icône plus petite */}
+             <Ionicons name="image-outline" size={30} color="#888" /> 
            </View>
         )}
 
-        {/* Informations de l'événement (à droite de l'image) */}
+       
         <View style={styles.eventInfo}>
-          <Text style={styles.eventName} numberOfLines={1}>{item.name || 'Nom de l\'événement inconnu'}</Text> {/* Limiter à une ligne */}
+          <Text style={styles.eventName} numberOfLines={1}>{item.name || 'Nom de l\'événement inconnu'}</Text> 
           <Text style={styles.eventDate} numberOfLines={1}>Quand: {formatTimestamp(item.date)}</Text>
           <Text style={styles.eventLocation} numberOfLines={1}>Où: {item.location || 'Lieu inconnu'}</Text>
         </View>
@@ -127,8 +127,8 @@ export default function Recherche() {
 
   return (
     <View style={styles.container}>
-      {/* Barre de recherche */}
-{/* Barre de recherche */}
+      
+
 <TextInput
         style={styles.searchInput}
         // Mettez à jour le placeholder
