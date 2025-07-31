@@ -1,0 +1,6 @@
+dans \app\auth\signIn.jsx
+              \signUp.jsx   ne pas prendre en compte les espaces vides apres avoir écrit
+
+gerer la map des events
+
+si un event à une date dépassé il ne faut plus l afficher 

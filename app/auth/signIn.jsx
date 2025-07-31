@@ -50,14 +50,14 @@ export default function SignIn() {
       <View style={styles.form}>
         <TextInput
           placeholder='Email'
-          onChangeText={setEmail}
+          onChangeText={text => setEmail(text.trim())} 
           style={styles.textInput}
           keyboardType="email-address"
           placeholderTextColor="rgba(0,0,0,0.4)"
         />
         <TextInput
           placeholder='Password'
-          onChangeText={setPassword}
+          onChangeText={text => setPassword(text.trim())}
           secureTextEntry={true}
           style={styles.textInput}
           placeholderTextColor="rgba(0,0,0,0.4)"
