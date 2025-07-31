@@ -203,4 +203,4 @@ Le dossier `app/` est structuré pour gérer les différentes sections de l'appl
 
 ---
 
-Cette documentation vous donne une vue d'ensemble des fichiers et de leur rôle dans votre projet `app/`. N'hésitez pas à l'ajuster ou à l'étendre si d'autres fichiers ou dossiers importants existent !
+Cette documentation vous donne une vue d'ensemble des fichiers et de leur rôle dans votre projet `app/`. N'hésitez pas à l'ajuster ou à l'étendre si d'autres fichiers ou dossiers importants existent ! 
