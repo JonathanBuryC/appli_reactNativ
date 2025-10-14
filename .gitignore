@@ -41,3 +41,6 @@ app-example
 # apikey
 firebase.ts
 
+# fichiers confidentiels
+firebase-debug.log
+firestore-debug.log
